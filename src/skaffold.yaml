@@ -16,4 +16,6 @@ build:
 
    tagPolicy:
       gitCommit:
+      envTemplate:
+         template: "{{ .DOV_VERSION }}"
 
