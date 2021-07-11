@@ -28,7 +28,7 @@ spec:
       spec:
          containers:
          - name: dov-container
-           image: chukmunnlee/dov-bear:v2
+           image: chukmunnlee/dov-bear:v1
            imagePullPolicy: IfNotPresent
            ports:
            - containerPort: 3000
@@ -55,3 +55,26 @@ spec:
    ports:
    - port: 3000
      targetPort: 3000
+
+--- 
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+   name: dov-ing
+   labels:
+      name: dov-ing
+      #   annotations:
+      #      kubernetes.io/ingress.class: "nginx"
+spec:
+   ingressClassName: nginx
+   rules:
+   - host: dov-192.168.39.66.nip.io
+     http:
+        paths:
+        - path: /
+          pathType: Prefix
+          backend:
+             service:
+                name: dov-svc
+                port: 
+                  number: 3000
