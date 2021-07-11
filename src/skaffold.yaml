@@ -15,7 +15,20 @@ build:
       push:
 
    tagPolicy:
-      gitCommit:
+      # one of the following
+      #gitCommit: {}
       envTemplate:
+         # run with DOV_VERSION=v2 skaffold build | dev
          template: "{{ .DOV_VERSION }}"
 
+deploy:
+   kubectl:
+      manifests:
+      - deploy.yaml
+
+portForward:
+- resourceType: Service
+  resourceName: dov-svc
+  namespace: default
+  port: 3000
+  localPort: 8080
