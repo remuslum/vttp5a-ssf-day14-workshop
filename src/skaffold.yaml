@@ -1,0 +1,19 @@
+apiVersion: skaffold/v2beta18
+kind: Config
+
+metadata:
+   name: dov-bear
+
+build:
+   artifacts:
+   - image: chukmunnlee/dov-bear
+     context: .
+     docker:
+        dockerfile: Dockerfile
+
+   local: 
+      push:
+
+   tagPolicy:
+      gitCommit:
+
