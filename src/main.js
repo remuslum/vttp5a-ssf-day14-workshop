@@ -27,11 +27,20 @@ const instHash = (opt) => {
 	return ''
 }
 
-const opt = cliOptions([ 
-	{ name: 'port', alias: 'p', type: Number },
-	{ name: 'name', alias: 'n', type: String },
-	{ name: 'hash', type: String },
-])
+let opt = {}
+
+try {
+	opt = cliOptions([ 
+		{ name: 'port', alias: 'p', type: Number },
+		{ name: 'name', alias: 'n', type: String },
+		{ name: 'hash', type: String },
+	])
+} catch (err) {
+	console.error('Parse CLI options error: ', err)
+	if (!process.env.HEROKU_WORKAROUND)
+		throw(err)
+	opt = {}
+}
 
 const port = opt['port'] || opt['p'] || parseInt(process.env.PORT) || 3000
 const instanceName = opt['name'] || opt['n'] || process.env.INSTANCE_NAME || ''
