@@ -19,14 +19,6 @@ const rnd = (range = 14, total = 4) => {
 	return nums.splice(0, total)
 }
 
-const instHash = (opt) => {
-	if (!!opt['hash'])
-		return `-${opt['hash']}`
-	else if (!!process.env.INSTANCE_HASH)
-		return `-${process.env.INSTANCE_HASH}`
-	return ''
-}
-
 let opt = {}
 
 try {
@@ -44,7 +36,7 @@ try {
 
 const port = opt['port'] || opt['p'] || parseInt(process.env.PORT) || 3000
 const instanceName = opt['name'] || opt['n'] || process.env.INSTANCE_NAME || ''
-const instanceHash = instHash(opt)
+const instanceHash = opt['hash'] || process.env.INSTANCE_HASH || '' 
 
 const app = express()
 
