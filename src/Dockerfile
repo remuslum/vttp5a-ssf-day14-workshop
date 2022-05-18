@@ -1,22 +1,27 @@
-FROM node:16
+ARG VERSION=18
+FROM node:${VERSION} AS builder
 
-ENV PORT=3000 APP_ROOT=/app
+WORKDIR /app
 
-WORKDIR ${APP_ROOT}
-
-ADD main.js .
 ADD package.json .
 ADD package-lock.json .
-ADD public public
-ADD views views
 
 RUN npm ci
 
+ADD main.js .
+ADD public public
+ADD views views
+
+FROM gcr.io/distroless/nodejs:${VERSION}
+
+LABEL org.opencontainers.image.source https://github.com/chukmunnlee/dov-bear
+
+ENV PORT=3000
+
+WORKDIR /app
+
+COPY --from=builder /app /app
+
 EXPOSE ${PORT}
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s \
-	--retries=3 CMD curl -s -f localhost:3000/healthz || exit 1
-
-ENTRYPOINT [ "node", "main.js" ]
-
-CMD []
+CMD [ "main" ]
