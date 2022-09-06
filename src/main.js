@@ -56,6 +56,9 @@ const imageCounters = [...Array(14).keys()]
 const requestDuration = meter.createHistogram('request_duration_ms'
 	, { description: 'Request duration' }
 )
+const requestInflight = meter.createUpDownCounter('request_inflight_total'
+	, { description: 'Total number of inflight requests' }
+)
 
 const app = express()
 
@@ -71,6 +74,12 @@ app.get('/healthz', (req, resp) => {
 app.use(express.static(__dirname + '/public'))
 
 app.get([ '/', '/index.html' ], (req, resp) => {
+	requestInflight.add(1, 
+		{ name: instanceName, pid: process.pid })
+	req.on('end', () => {
+	requestInflight.add(-1, 
+		{ name: instanceName, pid: process.pid })
+	})
 	const total = parseInt(req.query['num']) || 4
 	const dovs = rnd(14, total)
 	const start = (new Date()).getTime()
