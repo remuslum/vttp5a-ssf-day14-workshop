@@ -4,7 +4,6 @@ const hbs = require('express-handlebars')
 const express = require('express')
 const metrics = require('./metrics')
 
-
 const rnd = (range = 14, total = 4) => {
 	const nums = []
 
@@ -43,8 +42,9 @@ const instanceHash = opt['hash'] || process.env.INSTANCE_HASH || ''
 
 // Prometheus
 const metricsPort = opt['metricsPort'] || opt['m'] || parseInt(process.env.METRICS_PORT) || 3100
-const { meter, exporter } = metrics(metricsPort)
+const { meter, exporter, sdk } = metrics(metricsPort)
 
+// Create metrics
 const requestCounter = meter.createCounter('request_total'
 	, { description: 'Number of request' }
 )
@@ -53,6 +53,9 @@ const imageCounters = [...Array(14).keys()]
 				description: `Image dov${i}.gif`,
 			})
 		)
+const requestDuration = meter.createHistogram('request_duration_ms'
+	, { description: 'Request duration' }
+)
 
 const app = express()
 
@@ -70,10 +73,19 @@ app.use(express.static(__dirname + '/public'))
 app.get([ '/', '/index.html' ], (req, resp) => {
 	const total = parseInt(req.query['num']) || 4
 	const dovs = rnd(14, total)
+	const start = (new Date()).getTime()
 	resp.status(200).type('text/html')
 	resp.render('index', { dovs, instanceName, instanceHash })
-	requestCounter.add(1, { name: instanceName, pid: process.pid })
-	dovs.map(v => imageCounters[v].add(1, { name: instanceName, image_number: v }))
+	requestCounter.add(1, 
+		{ name: instanceName, pid: process.pid }
+	)
+	dovs.map(v => imageCounters[v].add(1, 
+		{ name: instanceName, pid: process.pid, image_number: v })
+	)
+	const stop = (new Date()).getTime()
+	requestDuration.record(stop - start, 
+		{ name: instanceName, pid: process.pid }
+	)
 })
 
 exporter.startServer()
