@@ -9,6 +9,7 @@ ADD package-lock.json .
 RUN npm ci
 
 ADD main.js .
+ADD metrics.js .
 ADD public public
 ADD views views
 
