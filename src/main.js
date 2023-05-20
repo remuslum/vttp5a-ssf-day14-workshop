@@ -1,6 +1,6 @@
 const cliOptions = require('command-line-args')
 const morgan = require('morgan')
-const hbs = require('express-handlebars')
+const { engine } = require('express-handlebars')
 const express = require('express')
 const metrics = require('./metrics')
 
@@ -62,7 +62,7 @@ const requestInflight = meter.createUpDownCounter('request_inflight_total'
 
 const app = express()
 
-app.engine('hbs', hbs({ defaultLayout: 'main.hbs' }))
+app.engine('hbs', engine({ defaultLayout: 'main.hbs' }))
 app.set('view engine', 'hbs')
 
 app.use(morgan('common'))
