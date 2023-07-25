@@ -1,4 +1,4 @@
-ARG VERSION=18
+ARG VERSION=20
 FROM node:${VERSION} AS builder
 
 WORKDIR /app
