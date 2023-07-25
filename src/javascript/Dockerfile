@@ -1,6 +1,8 @@
 ARG VERSION=20
 FROM node:${VERSION} AS builder
 
+LABEL org.opencontainers.image.source https://github.com/chukmunnlee/dov-bear
+
 WORKDIR /app
 
 ADD package.json .
@@ -14,16 +16,11 @@ ADD public public
 ADD views views
 
 
-FROM gcr.io/distroless/nodejs:${VERSION}
-
-LABEL org.opencontainers.image.source https://github.com/chukmunnlee/dov-bear
-
 ENV PORT=3000 METRICS_PORT=3100
 
-WORKDIR /app
-
-COPY --from=builder /app /app
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+	CMD curl -f http://localhost:${PORT}/healthz || exit 1
 
 EXPOSE ${PORT} ${METRICS_PORT}
 
-CMD [ "main" ]
+CMD node main
