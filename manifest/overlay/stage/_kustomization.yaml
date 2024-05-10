@@ -4,9 +4,12 @@ kind: Kustomization
 resources:
 - ../../base
 
-namespace: stage
+commonLabels:
+  commit: __COMMIT_HASH__
+
+buildMetadata: [managedByLabel]
 
 images:
 - name: chukmunnlee/dov-bear
-  newName: chukmunnlee/NEW_IMAGE_NAME
-  digest: NEW_DIGEST
+  newName: chukmunnlee/__NEW_IMAGE_NAME__
+  digest: __NEW_DIGEST__
