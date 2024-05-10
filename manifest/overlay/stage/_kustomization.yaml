@@ -9,4 +9,4 @@ namespace: dev
 images:
 - name: chukmunnlee/dov-bear
   newName: chukmunnlee/argo-dov-bear
-  newTag: 28def21
+  newTag: NEW_TAG
