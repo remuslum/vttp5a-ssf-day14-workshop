@@ -8,5 +8,5 @@ namespace: dev
 
 images:
 - name: chukmunnlee/dov-bear
-  newName: chukmunnlee/argo-dov-bear
+  newName: chukmunnlee/NEW_IMAGE_NAME
   digest: NEW_DIGEST
