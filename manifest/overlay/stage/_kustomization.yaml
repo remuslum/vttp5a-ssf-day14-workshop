@@ -4,10 +4,10 @@ kind: Kustomization
 resources:
 - ../../base
 
+buildMetadata: [managedByLabel]
+
 commonLabels:
   commit: __COMMIT_HASH__
-
-buildMetadata: [managedByLabel]
 
 images:
 - name: chukmunnlee/dov-bear
