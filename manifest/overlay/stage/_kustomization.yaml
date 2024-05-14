@@ -10,7 +10,7 @@ labels:
 - pairs:
     commit: __COMMIT_HASH__
   includeTemplates: true
-  includSelectors: true
+  includeSelectors: true
 
 images:
 - name: chukmunnlee/dov-bear
