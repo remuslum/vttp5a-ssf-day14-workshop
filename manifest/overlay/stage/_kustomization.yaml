@@ -6,8 +6,11 @@ resources:
 
 buildMetadata: [managedByLabel]
 
-commonLabels:
-  commit: __COMMIT_HASH__
+labels:
+- pairs:
+    commit: __COMMIT_HASH__
+  includeTemplates: true
+  includSelectors: true
 
 images:
 - name: chukmunnlee/dov-bear
