@@ -4,19 +4,20 @@ import future.keywords.in
 import future.keywords.if
 
 allow_list := { "npm ci", "npm ci --omit=dev" }
+trusted_repo := [ "docker.io/library/", "library/", "ghcr.io/chukmunnlee/" ]
 
 # Cannot use :latest tag 
-deny[msg] {
+deny_image_latest_tag[msg] {
 	some i
 		input[i].Cmd = "from"
 		img := split(input[i].Value[0], ":")
 		count(img) > 1
-		":latest" == img[1]
+		img[1] == ":latest" 
 		msg := sprintf("Cannot use 'latest' in image: %s", [ input[i].Value[0] ])
 }
 
 # Must specify image tag 
-deny[msg] {
+deny_image_no_tag[msg] {
 	some i
 		input[i].Cmd = "from"
 		img := split(input[i].Value[0], ":")
@@ -25,12 +26,21 @@ deny[msg] {
 }
 
 # Must use repository digest to identify image
-deny[msg] {
+deny_image_non_repodigest_tag[msg] {
 	some i
 		input[i].Cmd = "from"
 		img := split(input[i].Value[0], "@")
 		count(img) = 1
 		msg := sprintf("Must use RepoDigest (@sha256:) to identify image: %s", [ input[i].Value[0] ])
+}
+
+# Ignore the tag rules if the image is from a trusted repository
+exception[rules] {
+	some i
+		input[i].Cmd = "from"
+		trusted = [ 1 | startswith(input[i].Value[0],  trusted_repo[_]) ]
+		count(trusted) > 0
+		rules := [ "image_latest_tag", "image_no_tag", "image_non_repodigest_tag" ]
 }
 
 # Can only run commands in allow_list 
