@@ -6,11 +6,11 @@ LABEL maintainer=chukmunnlee
 
 WORKDIR /app
 
-ADD package*.json .
+COPY package*.json .
 
 RUN npm ci --omit=dev
 
-ADD . .
+COPY . .
 
 ENV PORT=3000 METRICS_PORT=3100
 
