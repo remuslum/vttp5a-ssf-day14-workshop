@@ -6,8 +6,7 @@ LABEL maintainer=chukmunnlee
 
 WORKDIR /app
 
-ADD package.json .
-ADD package-lock.json .
+ADD package*.json .
 
 RUN npm ci --omit=dev
 
