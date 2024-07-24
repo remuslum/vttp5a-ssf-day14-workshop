@@ -1,7 +1,8 @@
 #FROM library/node:22
 FROM node@sha256:d885885ad8e100d27b65e7837075afea042cc8515ec066cd82cdf34e26fc9fb8
 
-LABEL org.opencontainers.image.source https://github.com/chukmunnlee/dov-bear
+LABEL org.opencontainers.image.source=https://github.com/chukmunnlee/dov-bear
+LABEL maintainer=chukmunnlee
 
 WORKDIR /app
 
