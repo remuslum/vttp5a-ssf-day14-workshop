@@ -1,8 +1,10 @@
-#FROM library/node:22
-FROM node@sha256:d885885ad8e100d27b65e7837075afea042cc8515ec066cd82cdf34e26fc9fb8
+#FROM library/node:22-slim
+FROM node@sha256:2fb92fe9d7350866a73c5cc311c1a19919ffd47e8592d4233374ee330e3bdb1e
 
 LABEL org.opencontainers.image.source=https://github.com/chukmunnlee/dov-bear
 LABEL maintainer=chukmunnlee
+
+RUN apt update && apt upgrade -y
 
 WORKDIR /app
 

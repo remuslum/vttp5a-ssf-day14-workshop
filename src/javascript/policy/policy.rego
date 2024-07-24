@@ -3,7 +3,7 @@ package main
 import future.keywords.in
 import future.keywords.if
 
-allow_list := { "npm ci", "npm ci --omit=dev" }
+allow_list := { "npm ci", "npm ci --omit=dev", "apt update", "apt upgrade -y" }
 trusted_repo := [ "docker.io/library/", "library/", "ghcr.io/chukmunnlee/" ]
 
 # Cannot use :latest tag 
