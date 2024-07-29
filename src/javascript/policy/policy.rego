@@ -50,7 +50,7 @@ deny[msg] {
 		cmd := regex.split("\\&\\& | \\|\\|", input[i].Value[0])
 		s_cmd = { trim_space(c) | c := cmd[_] }
 		count(s_cmd - allow_list) > 0
-		msg := sprintf("Cannot RUN the following: %s", [ cmd ])
+		msg := sprintf("Cannot RUN the following: %s. You can only RUN these commands: %s", [ cmd, allow_list ])
 }
 
 # Must not run as root
