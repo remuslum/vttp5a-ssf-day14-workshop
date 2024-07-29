@@ -12,7 +12,7 @@ deny_image_latest_tag[msg] {
 		input[i].Cmd = "from"
 		img := split(input[i].Value[0], ":")
 		count(img) > 1
-		img[1] == ":latest" 
+		img[1] == "latest" 
 		msg := sprintf("Cannot use 'latest' in image: %s", [ input[i].Value[0] ])
 }
 
