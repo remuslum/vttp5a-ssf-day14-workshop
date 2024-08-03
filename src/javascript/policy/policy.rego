@@ -74,6 +74,12 @@ warn[msg] {
 	msg := sprintf("LABEL the image", [])
 }
 
+# Include MAINTAINER
+warn[msg] {
+	did_not_include_command("maintainer")
+	msg := sprintf("Add MAINTAINER to image", [])
+}
+
 # Include HEALTHCHECK
 warn[msg] {
 	did_not_include_command("healthcheck")
