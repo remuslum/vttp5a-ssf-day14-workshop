@@ -66,11 +66,10 @@ deny[msg] {
 	msg := sprintf("Cannot run as root: %s", [user])
 }
 
-did_not_include_command(directive) = true if count([ 1 | input[i].Cmd == directive ]) <= 0
+did_not_include_command(directive) = true if count([ 1 | input[i].Cmd = directive ]) <= 0
 
 # Label the image
 warn[msg] {
-	#count([label | input[i].Cmd == "label"; label = input[i].Value ]) <= 0
 	did_not_include_command("label")
 	msg := sprintf("LABEL the image", [])
 }
