@@ -66,29 +66,29 @@ deny[msg] {
 	msg := sprintf("Cannot run as root: %s", [user])
 }
 
-did_not_include_command(directive) = true if count([ 1 | input[i].Cmd = directive ]) <= 0
+did_not_include_directive(directive) = true if count([ 1 | input[i].Cmd = directive ]) <= 0
 
 # Label the image
 warn[msg] {
-	did_not_include_command("label")
+	did_not_include_directive("label")
 	msg := sprintf("LABEL the image", [])
 }
 
 # Include MAINTAINER
 warn[msg] {
-	did_not_include_command("maintainer")
+	did_not_include_directive("maintainer")
 	msg := sprintf("Add MAINTAINER to image", [])
 }
 
 # Include HEALTHCHECK
 warn[msg] {
-	did_not_include_command("healthcheck")
+	did_not_include_directive("healthcheck")
 	msg := sprintf("Add HEALTHCHECK to the image", [])
 }
 
 # Use ENTRYPOINT to start the container
 warn[msg] {
 	input[i].Cmd == "cmd"
-	did_not_include_command("entrypoint")
+	did_not_include_directive("entrypoint")
 	msg := sprintf("Prefer ENTRYPOINT over CMD: %s", [ input[i].Value ])
 }
