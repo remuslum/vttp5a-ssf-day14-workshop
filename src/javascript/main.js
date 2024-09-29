@@ -3,6 +3,8 @@ const morgan = require('morgan')
 const { engine } = require('express-handlebars')
 const express = require('express')
 const metrics = require('./metrics')
+const winston = require('winston')
+const expressWinston = require('express-winston')
 
 const rnd = (range = 14, total = 4) => {
 	const nums = []
@@ -28,6 +30,8 @@ try {
 		{ name: 'metricsPort', alias: 'm', type: String },
 		{ name: 'name', alias: 'n', type: String },
 		{ name: 'hash', type: String },
+		{ name: 'promtailHost', type: String },
+		{ name: 'promtailPort', type: Number, defaultValue: 5000 }
 	])
 } catch (err) {
 	console.error('Parse CLI options error: ', err)
@@ -39,10 +43,13 @@ try {
 const port = opt['port'] || opt['p'] || parseInt(process.env.PORT) || 3000
 const instanceName = opt['name'] || opt['n'] || process.env.INSTANCE_NAME || 'dov-bear'
 const instanceHash = opt['hash'] || process.env.INSTANCE_HASH || '' 
+const promtailHost = opt['promtailHost'] || !!process.env.PROMTAIL_HOST || ''
+const promtailPort = opt['promtailPort'] || parseInt(process.env.PROMTAIL_PORT) || 0
+
 
 // Prometheus
 const metricsPort = opt['metricsPort'] || opt['m'] || parseInt(process.env.METRICS_PORT) || 3100
-const { meter, exporter, sdk } = metrics(metricsPort)
+const { meter, exporter } = metrics(metricsPort)
 
 // Create metrics
 const requestCounter = meter.createCounter('request_total'
@@ -60,12 +67,43 @@ const requestInflight = meter.createUpDownCounter('request_inflight_total'
 	, { description: 'Total number of inflight requests' }
 )
 
+const transports = [
+	new winston.transports.Console()
+]
+
+if (!!promtailHost) 
+	transports.push(
+		new winston.transports.Http({
+			host: promtailHost,
+			port: promtailPort,
+			path: '/promtail/api/v1/raw',
+			//batch: true,
+			//batchInterval: 5000,
+			//batchCount: 10
+		})
+	)
+
+const logger = winston.createLogger({
+	format: winston.format.json(),
+	defaultMeta: { 
+		instance: instanceName, 
+		hash: instanceHash
+	},
+	transports
+})
+
+// logger
+var expressLogger = expressWinston.logger({
+	winstonInstance: logger,
+	ignoreRoute: (req) => req.path.endsWith('/healthz')
+})
+
 const app = express()
 
 app.engine('hbs', engine({ defaultLayout: 'main.hbs' }))
 app.set('view engine', 'hbs')
 
-app.use(morgan('common'))
+app.use(expressLogger)
 
 app.get('/healthz', (req, resp) => {
 	resp.status(204).end()
@@ -102,6 +140,8 @@ exporter.startServer()
 		app.listen(port, () => {
 			console.info(`Application started on port ${port} at ${new Date()}`)
 			console.info(`Metrics endpoint at /metrics on port ${metricsPort}`)
+			if (!!promtailHost)
+				console.info(`Central logging at ${promtailHost}:${promtailPort}`)
 		})
 	})
 	.catch(error => {
