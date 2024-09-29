@@ -77,7 +77,7 @@ if (!!promtailHost)
 			host: promtailHost,
 			port: promtailPort,
 			path: '/promtail/api/v1/raw',
-			batch: true,
+			//batch: true,
 			//batchInterval: 5000,
 			//batchCount: 10
 		})
@@ -98,7 +98,7 @@ var expressLogger = expressWinston.logger({
 	defaultMeta: { 
 		instance: instanceName, 
 		hash: instanceHash,
-		service_name: 'dov-bear'
+		//service_name: 'dov-bear'
 	},
 	//format: winston.format.json(),
 	//transports,
