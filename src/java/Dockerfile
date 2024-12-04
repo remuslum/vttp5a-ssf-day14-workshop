@@ -12,8 +12,10 @@ COPY mvnw.cmd .
 
 RUN ./mvnw clean package -Dmaven.tests.skip=true
 
-ENV SERVER_PORT=3000
+ENV PORT=3000
+ENV INSTANCE_NAME="Remus-dov-bear"
+ENV INSTANCE_HASH="abc123"
 
-EXPOSE ${SERVER_PORT}
+EXPOSE ${PORT}
 
-ENTRYPOINT java -jar target/dovbear-0.0.1-SNAPSHOT.jar
+ENTRYPOINT java -jar target/dovbear-0.0.1-SNAPSHOT.jar --name=${INSTANCE_NAME} --hash=${INSTANCE_HASH}
